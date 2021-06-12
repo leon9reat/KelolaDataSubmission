@@ -1,4 +1,4 @@
-package com.medialink.keloladatasubmission.ui.fragment
+package com.medialink.keloladatasubmission.ui.fragment.tv
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -12,10 +12,10 @@ import com.medialink.keloladatasubmission.data.source.local.entity.TvDetailEntit
 import com.medialink.keloladatasubmission.data.source.remote.retrofit.ApiConfig
 import com.medialink.keloladatasubmission.databinding.BaseItemBinding
 
-class TvAdapter(private val mCallback: IBaseFragment) :
+class TvAdapter(private val mCallback: ITvFragment) :
     PagedListAdapter<TvDetailEntity, TvAdapter.BaseViewHolder>(DIFF_CALLBACK) {
 
-    class BaseViewHolder(private val binding: BaseItemBinding) :
+    inner class BaseViewHolder(private val binding: BaseItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(data: TvDetailEntity) {
             with(binding) {
@@ -37,6 +37,15 @@ class TvAdapter(private val mCallback: IBaseFragment) :
                             .error(R.drawable.ic_baseline_error_outline_24)
                     )
                     .into(imgPoster)
+
+                if (data.isFavorite) {
+                    btnLike.icon = itemView.context.getDrawable(R.drawable.ic_baseline_favorite_24)
+                } else {
+                    btnLike.icon = itemView.context.getDrawable(R.drawable.ic_baseline_favorite_border_24)
+                }
+                btnLike.setOnClickListener {
+                    mCallback.tvFavoriteClick(data)
+                }
             }
         }
     }
@@ -61,7 +70,7 @@ class TvAdapter(private val mCallback: IBaseFragment) :
                 oldItem: TvDetailEntity,
                 newItem: TvDetailEntity
             ): Boolean {
-                return oldItem.id == newItem.id
+                return oldItem.id == newItem.id || oldItem.isFavorite == newItem.isFavorite
             }
 
             override fun areContentsTheSame(

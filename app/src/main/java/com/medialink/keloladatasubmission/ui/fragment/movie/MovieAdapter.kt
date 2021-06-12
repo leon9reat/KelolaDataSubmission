@@ -1,8 +1,7 @@
-package com.medialink.keloladatasubmission.ui.fragment
+package com.medialink.keloladatasubmission.ui.fragment.movie
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
 import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -13,7 +12,7 @@ import com.medialink.keloladatasubmission.data.source.local.entity.MovieDetailEn
 import com.medialink.keloladatasubmission.data.source.remote.retrofit.ApiConfig
 import com.medialink.keloladatasubmission.databinding.BaseItemBinding
 
-class MovieAdapter(private val mCallback: IBaseFragment) :
+class MovieAdapter(private val mCallback: IMovieFragment) :
     PagedListAdapter<MovieDetailEntity, MovieAdapter.BaseViewHolder>(DIFF_CALLBACK) {
 
     inner class BaseViewHolder(private val binding: BaseItemBinding) :
@@ -71,7 +70,7 @@ class MovieAdapter(private val mCallback: IBaseFragment) :
                 oldItem: MovieDetailEntity,
                 newItem: MovieDetailEntity
             ): Boolean {
-                return oldItem.id == newItem.id
+                return oldItem.id == newItem.id || oldItem.isFavorite == newItem.isFavorite
             }
 
             override fun areContentsTheSame(

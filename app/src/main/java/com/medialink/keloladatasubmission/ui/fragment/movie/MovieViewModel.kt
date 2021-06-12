@@ -1,4 +1,4 @@
-package com.medialink.keloladatasubmission.ui.fragment
+package com.medialink.keloladatasubmission.ui.fragment.movie
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel

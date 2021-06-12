@@ -5,8 +5,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.medialink.keloladatasubmission.data.source.TheMovieRepository
 import com.medialink.keloladatasubmission.di.Injection
-import com.medialink.keloladatasubmission.ui.fragment.MovieViewModel
-import com.medialink.keloladatasubmission.ui.fragment.TvViewModel
+import com.medialink.keloladatasubmission.ui.fragment.movie.MovieViewModel
+import com.medialink.keloladatasubmission.ui.fragment.tv.TvViewModel
 
 class ViewModelFactory
 private constructor(private val mRepository: TheMovieRepository) :
@@ -41,4 +41,6 @@ private constructor(private val mRepository: TheMovieRepository) :
                     }
                 }
         }
+
+
 }

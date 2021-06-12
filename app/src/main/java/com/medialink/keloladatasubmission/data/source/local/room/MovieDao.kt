@@ -12,6 +12,9 @@ interface MovieDao {
     @Query("SELECT * FROM movie_detail")
     fun getList(): DataSource.Factory<Int, MovieDetailEntity>
 
+    @Query("SELECT COUNT(id) FROM movie_detail")
+    fun getMovieCount(): Int
+
     @Query("SELECT * FROM movie_detail WHERE is_favorite = 1")
     fun getFavorite(): DataSource.Factory<Int, MovieDetailEntity>
 
@@ -28,6 +31,9 @@ interface MovieDao {
 
     @Query("SELECT * FROM tv_detail")
     fun getListTv(): DataSource.Factory<Int, TvDetailEntity>
+
+    @Query("SELECT COUNT(id) FROM tv_detail")
+    fun getTvCount(): Int
 
     @Query("SELECT * FROM tv_detail WHERE is_favorite = 1")
     fun getFavoriteTv(): DataSource.Factory<Int, TvDetailEntity>

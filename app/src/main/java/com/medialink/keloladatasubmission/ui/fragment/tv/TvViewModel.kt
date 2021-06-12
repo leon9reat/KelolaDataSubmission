@@ -1,4 +1,4 @@
-package com.medialink.keloladatasubmission.ui.fragment
+package com.medialink.keloladatasubmission.ui.fragment.tv
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
@@ -12,7 +12,9 @@ class TvViewModel(private val theMovieRepo: TheMovieRepository): ViewModel() {
     fun getListTv(): LiveData<Resource<PagedList<TvDetailEntity>>> =
         theMovieRepo.getListTv()
 
-    fun setFavoriteTv(tv: TvDetailEntity, state: Boolean) =
-        theMovieRepo.setFavoriteTv(tv, state)
+    fun setFavoriteTv(tv: TvDetailEntity) {
+        val newState = !tv.isFavorite
+        theMovieRepo.setFavoriteTv(tv, newState)
+    }
 
 }

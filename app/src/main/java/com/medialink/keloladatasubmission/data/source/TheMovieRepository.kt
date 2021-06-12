@@ -15,6 +15,8 @@ import com.medialink.keloladatasubmission.data.source.remote.response.movie.Movi
 import com.medialink.keloladatasubmission.data.source.remote.response.tv.*
 import com.medialink.keloladatasubmission.utils.AppExecutors
 import com.medialink.keloladatasubmission.vo.Resource
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
 @Suppress("DEPRECATION")
@@ -31,8 +33,8 @@ private constructor(
             override fun loadFromDB(): LiveData<PagedList<MovieDetailEntity>> {
                 val config = PagedList.Config.Builder()
                     .setEnablePlaceholders(false)
-                    .setInitialLoadSizeHint(4)
-                    .setPageSize(4)
+                    .setInitialLoadSizeHint(10)
+                    .setPageSize(10)
                     .build()
                 val listData = LivePagedListBuilder(mLocal.getListMovie(), config).build()
                 Log.d("TAG", "loadFromDB: ${listData.value}")
@@ -40,8 +42,18 @@ private constructor(
             }
 
             override fun shouldFetch(data: PagedList<MovieDetailEntity>?): Boolean {
-                Log.d("TAG", "shouldFetch: ${data?.size}")
-                return data == null || data.isEmpty()
+                var i = 0
+                runBlocking {
+                    launch(Dispatchers.IO) {
+                        i = mLocal.getMovieCount()
+                    }
+                }
+                Log.d("TAG", "getMovieCount: $i")
+                return i <= 0
+
+
+                //Log.d("TAG", "shouldFetch: ${data?.size}")
+                //return data == null || data.isEmpty()
             }
 
             override fun createCall(): LiveData<ApiResponse<List<Movie>>> {
@@ -139,7 +151,15 @@ private constructor(
             }
 
             override fun shouldFetch(data: PagedList<TvDetailEntity>?): Boolean {
-                return data == null || data.isEmpty()
+                var i = 0
+                runBlocking {
+                    launch(Dispatchers.IO) {
+                        i = mLocal.getTvCount()
+                    }
+                }
+                Log.d("TAG", "getTvCount: $i")
+                return i <= 0
+                //return data == null || data.isEmpty()
             }
 
             override fun createCall(): LiveData<ApiResponse<List<TvShow>>> {
