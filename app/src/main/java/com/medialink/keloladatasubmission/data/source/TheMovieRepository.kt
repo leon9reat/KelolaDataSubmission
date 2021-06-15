@@ -7,12 +7,15 @@ import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
 import com.medialink.keloladatasubmission.data.source.local.LocalDataSource
 import com.medialink.keloladatasubmission.data.source.local.entity.MovieDetailEntity
+import com.medialink.keloladatasubmission.data.source.local.entity.MovieUpdate
 import com.medialink.keloladatasubmission.data.source.local.entity.TvDetailEntity
+import com.medialink.keloladatasubmission.data.source.local.entity.TvUpdate
 import com.medialink.keloladatasubmission.data.source.remote.RemoteDataSource
 import com.medialink.keloladatasubmission.data.source.remote.response.ApiResponse
 import com.medialink.keloladatasubmission.data.source.remote.response.movie.Movie
 import com.medialink.keloladatasubmission.data.source.remote.response.movie.MovieDetail
-import com.medialink.keloladatasubmission.data.source.remote.response.tv.*
+import com.medialink.keloladatasubmission.data.source.remote.response.tv.TvDetail
+import com.medialink.keloladatasubmission.data.source.remote.response.tv.TvShow
 import com.medialink.keloladatasubmission.utils.AppExecutors
 import com.medialink.keloladatasubmission.vo.Resource
 import kotlinx.coroutines.Dispatchers
@@ -29,12 +32,13 @@ private constructor(
     TheMovieDataSource {
     override fun getListMovie(): LiveData<Resource<PagedList<MovieDetailEntity>>> {
 
-        return object : NetworkBoundResource<PagedList<MovieDetailEntity>, List<Movie>>(appExecutors) {
+        return object :
+            NetworkBoundResource<PagedList<MovieDetailEntity>, List<Movie>>(appExecutors) {
             override fun loadFromDB(): LiveData<PagedList<MovieDetailEntity>> {
                 val config = PagedList.Config.Builder()
                     .setEnablePlaceholders(false)
-                    .setInitialLoadSizeHint(10)
-                    .setPageSize(10)
+                    .setInitialLoadSizeHint(20)
+                    .setPageSize(20)
                     .build()
                 val listData = LivePagedListBuilder(mLocal.getListMovie(), config).build()
                 Log.d("TAG", "loadFromDB: ${listData.value}")
@@ -59,7 +63,7 @@ private constructor(
             override fun createCall(): LiveData<ApiResponse<List<Movie>>> {
                 val listMovie = MutableLiveData<ApiResponse<List<Movie>>>()
                 runBlocking {
-                    listMovie.value = (mRemote.getListMovies(1) as ApiResponse<List<Movie>>?)
+                    listMovie.postValue(mRemote.getListMovies(1) as ApiResponse<List<Movie>>?)
                 }
                 return listMovie
             }
@@ -97,7 +101,7 @@ private constructor(
             }
 
             override fun shouldFetch(data: MovieDetailEntity?): Boolean {
-                return data == null || data.isDetail == false
+                return data == null || !data.isDetail
             }
 
             override fun createCall(): LiveData<ApiResponse<MovieDetail>> {
@@ -109,11 +113,10 @@ private constructor(
             }
 
             override fun saveCallResult(data: MovieDetail) {
-                val movie = MovieDetailEntity(
+                val movie = MovieUpdate(
                     id = data.id ?: 0,
                     adult = data.adult,
                     backdropPath = data.backdropPath,
-                    belongsToCollection = data.belongsToCollection,
                     budget = data.budget,
                     homepage = data.homepage,
                     imdbId = data.imdbId,
@@ -131,21 +134,24 @@ private constructor(
                     video = data.video,
                     voteAverage = data.voteAverage,
                     voteCount = data.voteCount,
+                    isDetail = true
                 )
 
-                mLocal.updateMovie(movie)
+                //mLocal.updateMovie(movie)
+                mLocal.updateMoviePartial(movie)
             }
 
         }.asLiveData()
     }
 
     override fun getListTv(): LiveData<Resource<PagedList<TvDetailEntity>>> {
-        return object : NetworkBoundResource<PagedList<TvDetailEntity>, List<TvShow>>(appExecutors) {
+        return object :
+            NetworkBoundResource<PagedList<TvDetailEntity>, List<TvShow>>(appExecutors) {
             override fun loadFromDB(): LiveData<PagedList<TvDetailEntity>> {
                 val config = PagedList.Config.Builder()
                     .setEnablePlaceholders(false)
-                    .setInitialLoadSizeHint(10)
-                    .setPageSize(10)
+                    .setInitialLoadSizeHint(20)
+                    .setPageSize(20)
                     .build()
                 return LivePagedListBuilder(mLocal.getListTv(), config).build()
             }
@@ -202,7 +208,7 @@ private constructor(
             }
 
             override fun shouldFetch(data: TvDetailEntity?): Boolean {
-                return data == null || data.isDetail == false
+                return data == null || !data.isDetail
             }
 
             override fun createCall(): LiveData<ApiResponse<TvDetail>> {
@@ -214,7 +220,7 @@ private constructor(
             }
 
             override fun saveCallResult(data: TvDetail) {
-                val tv = TvDetailEntity(
+                val tv = TvUpdate(
                     backdropPath = data.backdropPath,
                     firstAirDate = data.firstAirDate,
                     homepage = data.homepage,
@@ -222,7 +228,6 @@ private constructor(
                     inProduction = data.inProduction,
                     lastAirDate = data.lastAirDate,
                     name = data.name,
-                    nextEpisodeToAir = data.nextEpisodeToAir,
                     numberOfEpisodes = data.numberOfEpisodes,
                     numberOfSeasons = data.numberOfSeasons,
                     originalLanguage = data.originalLanguage,
@@ -234,21 +239,32 @@ private constructor(
                     tagline = data.tagline,
                     type = data.type,
                     voteAverage = data.voteAverage,
-                    voteCount = data.voteCount
+                    voteCount = data.voteCount,
+                    isDetail = true
                 )
 
-                mLocal.updateTv(tv)
+                mLocal.updateTvPartial(tv)
             }
 
         }.asLiveData()
     }
 
-    override fun getFavoriteMovie(): LiveData<Resource<PagedList<MovieDetailEntity>>> {
-        TODO("getFavoriteMovie not assigned")
+    override fun getFavoriteMovie(): LiveData<PagedList<MovieDetailEntity>> {
+        val config = PagedList.Config.Builder()
+            .setEnablePlaceholders(false)
+            .setInitialLoadSizeHint(20)
+            .setPageSize(20)
+            .build()
+        return LivePagedListBuilder(mLocal.getFavoriteMovie(), config).build()
     }
 
-    override fun getFavoriteTv(): LiveData<Resource<PagedList<TvDetailEntity>>> {
-        TODO("getFavoriteTv not assigned")
+    override fun getFavoriteTv(): LiveData<PagedList<TvDetailEntity>> {
+        val config = PagedList.Config.Builder()
+            .setEnablePlaceholders(false)
+            .setInitialLoadSizeHint(20)
+            .setPageSize(20)
+            .build()
+        return LivePagedListBuilder(mLocal.getFavoriteTv(), config).build()
     }
 
     override fun setFavoriteMovie(movie: MovieDetailEntity, state: Boolean) {

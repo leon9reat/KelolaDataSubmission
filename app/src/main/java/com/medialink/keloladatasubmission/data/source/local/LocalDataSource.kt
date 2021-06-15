@@ -2,8 +2,11 @@ package com.medialink.keloladatasubmission.data.source.local
 
 import androidx.lifecycle.LiveData
 import androidx.paging.DataSource
+import androidx.sqlite.db.SimpleSQLiteQuery
 import com.medialink.keloladatasubmission.data.source.local.entity.MovieDetailEntity
+import com.medialink.keloladatasubmission.data.source.local.entity.MovieUpdate
 import com.medialink.keloladatasubmission.data.source.local.entity.TvDetailEntity
+import com.medialink.keloladatasubmission.data.source.local.entity.TvUpdate
 import com.medialink.keloladatasubmission.data.source.local.room.MovieDao
 
 class LocalDataSource private constructor(
@@ -35,6 +38,10 @@ class LocalDataSource private constructor(
         mTheMovieDao.update(movie)
     }
 
+    fun updateMoviePartial(movie: MovieUpdate) {
+        mTheMovieDao.updatePartial(movie)
+    }
+
     /* tv show */
     fun getListTv(): DataSource.Factory<Int, TvDetailEntity> =
         mTheMovieDao.getListTv()
@@ -58,6 +65,20 @@ class LocalDataSource private constructor(
 
     fun updateTv(tv: TvDetailEntity) {
         mTheMovieDao.updateTv(tv)
+    }
+
+    fun updateTvPartial(tv: TvUpdate) {
+        mTheMovieDao.updateTvPartial(tv)
+    }
+
+    fun getRawMovieCount(isFavorite: Boolean): Int {
+        var query: SimpleSQLiteQuery
+        if (isFavorite) {
+            query = SimpleSQLiteQuery("SELECT COUNT(id) FROM movie_detail WHERE is_favorite = 1")
+        } else {
+            query = SimpleSQLiteQuery("SELECT COUNT(id) FROM movie_detail")
+        }
+        return mTheMovieDao.getRawMovieCount(query)
     }
 
     companion object {

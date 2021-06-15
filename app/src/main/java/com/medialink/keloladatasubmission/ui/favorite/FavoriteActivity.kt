@@ -5,11 +5,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.medialink.keloladatasubmission.R
 import com.medialink.keloladatasubmission.databinding.ActivityMainBinding
+import com.medialink.keloladatasubmission.ui.favorite.movie.MovieFavFragment
+import com.medialink.keloladatasubmission.ui.favorite.tv.TvFavFragment
 import com.medialink.keloladatasubmission.ui.main.IMainActivity
 import com.medialink.keloladatasubmission.ui.main.SectionsPagerAdapter
 import com.medialink.keloladatasubmission.utils.AppConfig
 
-class FavoriteActivity : AppCompatActivity(), IMainActivity {
+class FavoriteActivity : AppCompatActivity(), IFavoriteActivity {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val binding = ActivityMainBinding.inflate(layoutInflater)
@@ -30,8 +32,8 @@ class FavoriteActivity : AppCompatActivity(), IMainActivity {
 
     override fun getFragment(position: Int): Fragment {
         return when (position) {
-            //0 -> MovieFragment()
-            //1 -> TvFragment()
+            0 -> MovieFavFragment()
+            1 -> TvFavFragment()
             else -> Fragment()
         }
     }

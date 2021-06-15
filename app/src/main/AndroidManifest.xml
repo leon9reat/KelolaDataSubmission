@@ -11,11 +11,13 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.KelolaDataSubmission">
-        <activity android:name=".ui.favorite.FavoriteActivity"
+        <activity android:name=".ui.detail.DetailActivity"></activity>
+        <activity
+            android:name=".ui.favorite.FavoriteActivity"
             android:parentActivityName=".ui.main.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ui.main.MainActivity"/>
+                android:value=".ui.main.MainActivity" />
         </activity>
         <activity android:name=".ui.main.MainActivity">
             <intent-filter>

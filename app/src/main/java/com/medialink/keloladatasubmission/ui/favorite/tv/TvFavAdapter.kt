@@ -1,4 +1,4 @@
-package com.medialink.keloladatasubmission.ui.fragment.tv
+package com.medialink.keloladatasubmission.ui.favorite.tv
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -10,12 +10,12 @@ import com.bumptech.glide.request.RequestOptions
 import com.medialink.keloladatasubmission.R
 import com.medialink.keloladatasubmission.data.source.local.entity.TvDetailEntity
 import com.medialink.keloladatasubmission.data.source.remote.retrofit.ApiConfig
-import com.medialink.keloladatasubmission.databinding.BaseItemBinding
+import com.medialink.keloladatasubmission.databinding.FavoriteItemBinding
 
-class TvAdapter(private val mCallback: ITvFragment) :
-    PagedListAdapter<TvDetailEntity, TvAdapter.BaseViewHolder>(DIFF_CALLBACK) {
+class TvFavAdapter(private val mCallback: ITvFavFragment) :
+    PagedListAdapter<TvDetailEntity, TvFavAdapter.BaseViewHolder>(DIFF_CALLBACK) {
 
-    inner class BaseViewHolder(private val binding: BaseItemBinding) :
+    inner class BaseViewHolder(private val binding: FavoriteItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(data: TvDetailEntity) {
             with(binding) {
@@ -25,11 +25,7 @@ class TvAdapter(private val mCallback: ITvFragment) :
                 tvVoteMovie.text = data.voteAverage.toString()
                 progressVote.progress = data.voteAverage?.times(10)?.toInt() ?: 0
                 tvOverviewMovie.text = data.overview
-                /*itemView.setOnClickListener {
-                    val intent = Intent(itemView.context, DetailCourseActivity::class.java)
-                    intent.putExtra(DetailCourseActivity.EXTRA_COURSE, data.courseId)
-                    itemView.context.startActivity(intent)
-                }*/
+
                 Glide.with(itemView.context)
                     .load(String.format(ApiConfig.POSTER_PATH, data.posterPath))
                     .apply(
@@ -38,37 +34,16 @@ class TvAdapter(private val mCallback: ITvFragment) :
                     )
                     .into(imgPoster)
 
-                btnLike.icon = if (data.isFavorite)
-                    itemView.context.getDrawable(R.drawable.ic_baseline_favorite_24) else
-                    itemView.context.getDrawable(R.drawable.ic_baseline_favorite_border_24)
 
-                btnLike.setOnClickListener {
-                    btnLike.icon = if (data.isFavorite)
-                        itemView.context.getDrawable(R.drawable.ic_baseline_favorite_border_24) else
-                        itemView.context.getDrawable(R.drawable.ic_baseline_favorite_24)
-
-                    mCallback.tvFavoriteClick(data)
+                btnHapus.setOnClickListener {
+                    mCallback.tvDeleteClick(data)
                 }
                 itemView.setOnClickListener {
                     mCallback.tvDetail(data.id)
                 }
-
             }
-        }
-    }
 
-    override fun onBindViewHolder(holder: BaseViewHolder, position: Int) {
-        val data = getItem(position)
-        if (data != null) {
-            holder.bind(data)
         }
-    }
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder {
-        val binding = BaseItemBinding.inflate(
-            LayoutInflater.from(parent.context), parent, false
-        )
-        return BaseViewHolder(binding)
     }
 
     companion object {
@@ -90,6 +65,19 @@ class TvAdapter(private val mCallback: ITvFragment) :
             }
         }
     }
+
+    override fun onBindViewHolder(holder: BaseViewHolder, position: Int) {
+        val data = getItem(position)
+        if (data != null) {
+            holder.bind(data)
+        }
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder {
+        val binding = FavoriteItemBinding.inflate(
+            LayoutInflater.from(parent.context), parent, false
+        )
+        return BaseViewHolder(binding)
+    }
+
 }
-
-

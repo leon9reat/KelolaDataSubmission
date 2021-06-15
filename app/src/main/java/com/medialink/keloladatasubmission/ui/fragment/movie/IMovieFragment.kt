@@ -6,4 +6,6 @@ interface IMovieFragment {
 
     fun movieFavoriteClick(movie: MovieDetailEntity)
 
+    fun movieDetail(id: Int)
+
 }

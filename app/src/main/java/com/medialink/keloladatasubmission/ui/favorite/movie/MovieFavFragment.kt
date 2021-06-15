@@ -1,4 +1,4 @@
-package com.medialink.keloladatasubmission.ui.fragment.movie
+package com.medialink.keloladatasubmission.ui.favorite.movie
 
 import android.content.Intent
 import android.os.Bundle
@@ -10,17 +10,22 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.snackbar.Snackbar
+import com.medialink.keloladatasubmission.R
 import com.medialink.keloladatasubmission.data.source.local.entity.MovieDetailEntity
 import com.medialink.keloladatasubmission.databinding.FragmentBaseBinding
 import com.medialink.keloladatasubmission.ui.detail.DetailActivity
+import com.medialink.keloladatasubmission.ui.fragment.movie.MovieAdapter
+import com.medialink.keloladatasubmission.ui.fragment.movie.MovieViewModel
 import com.medialink.keloladatasubmission.utils.AppConfig
 import com.medialink.keloladatasubmission.viewmodel.ViewModelFactory
 import com.medialink.keloladatasubmission.vo.Status
 
-class MovieFragment : Fragment(), IMovieFragment {
+class MovieFavFragment : Fragment(), IMovieFavFargment {
 
+    private val TAG = MovieFavFragment::class.java.simpleName
     private lateinit var binding: FragmentBaseBinding
-    private lateinit var viewModel: MovieViewModel
+    private lateinit var viewModel: MovieFavViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -37,24 +42,13 @@ class MovieFragment : Fragment(), IMovieFragment {
 
         if (activity != null) {
             val factory = ViewModelFactory.getInstance(requireActivity())
-            viewModel = ViewModelProvider(this, factory)[MovieViewModel::class.java]
+            viewModel = ViewModelProvider(this, factory)[MovieFavViewModel::class.java]
 
-            val movieAdapter = MovieAdapter(this)
-            viewModel.getListMovie().observe(viewLifecycleOwner, {
-                if (it != null) {
-                    when (it.status) {
-                        Status.LOADING -> binding.progressBar.visibility = View.VISIBLE
-                        Status.SUCCESS -> {
-                            binding.progressBar.visibility = View.GONE
-                            movieAdapter.submitList(it.data)
-                            Log.d("getListMovie().observe", "onViewCreated: ${it.data?.size}")
-                        }
-                        Status.ERROR -> {
-                            binding.progressBar.visibility = View.GONE
-                            Toast.makeText(context, "Terjadi kesalahan", Toast.LENGTH_SHORT).show()
-                        }
-                    }
-                }
+            val movieAdapter = MovieFavAdapter(this)
+            binding.progressBar.visibility = View.VISIBLE
+            viewModel.getListMovie().observe(viewLifecycleOwner, { listMovie ->
+                binding.progressBar.visibility = View.GONE
+                movieAdapter.submitList(listMovie)
             })
 
             with(binding.moviesRv) {
@@ -65,8 +59,13 @@ class MovieFragment : Fragment(), IMovieFragment {
         }
     }
 
-    override fun movieFavoriteClick(movie: MovieDetailEntity) {
+    override fun movieDeleteClick(movie: MovieDetailEntity) {
         viewModel.setFavoriteMovie(movie)
+        val snackbar = Snackbar.make(view as View, R.string.message_undo, Snackbar.LENGTH_LONG)
+        snackbar.setAction(R.string.message_ok) { v ->
+            viewModel.setFavoriteMovie(movie)
+        }
+        snackbar.show()
     }
 
     override fun movieDetail(id: Int) {
@@ -75,4 +74,5 @@ class MovieFragment : Fragment(), IMovieFragment {
         i.putExtra(DetailActivity.ID_JENIS, AppConfig.TYPE_MOVIE)
         startActivity(i)
     }
+
 }

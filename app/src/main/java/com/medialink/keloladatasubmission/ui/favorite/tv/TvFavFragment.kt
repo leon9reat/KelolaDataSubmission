@@ -1,28 +1,27 @@
-package com.medialink.keloladatasubmission.ui.fragment.tv
+package com.medialink.keloladatasubmission.ui.favorite.tv
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
+import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.snackbar.Snackbar
+import com.medialink.keloladatasubmission.R
 import com.medialink.keloladatasubmission.data.source.local.entity.TvDetailEntity
 import com.medialink.keloladatasubmission.databinding.FragmentBaseBinding
 import com.medialink.keloladatasubmission.ui.detail.DetailActivity
+import com.medialink.keloladatasubmission.ui.favorite.movie.MovieFavAdapter
 import com.medialink.keloladatasubmission.utils.AppConfig
 import com.medialink.keloladatasubmission.viewmodel.ViewModelFactory
-import com.medialink.keloladatasubmission.vo.Status
 
+class TvFavFragment : Fragment(), ITvFavFragment {
 
-class TvFragment : Fragment(), ITvFragment {
-
+    private val TAG = TvFavFragment::class.java.simpleName
     private lateinit var binding: FragmentBaseBinding
-    private lateinit var viewModel: TvViewModel
-
+    private lateinit var viewModel: TvFavViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -39,36 +38,30 @@ class TvFragment : Fragment(), ITvFragment {
 
         if (activity != null) {
             val factory = ViewModelFactory.getInstance(requireActivity())
-            viewModel = ViewModelProvider(this, factory)[TvViewModel::class.java]
+            viewModel = ViewModelProvider(this, factory)[TvFavViewModel::class.java]
 
-            val movieAdapter = TvAdapter(this)
-            viewModel.getListTv().observe(viewLifecycleOwner, {
-                if (it != null) {
-                    when (it.status) {
-                        Status.LOADING -> binding.progressBar.visibility = View.VISIBLE
-                        Status.SUCCESS -> {
-                            binding.progressBar.visibility = View.GONE
-                            movieAdapter.submitList(it.data)
-                            Log.d("getListTv().observe", "onViewCreated: ${it.data?.size}")
-                        }
-                        Status.ERROR -> {
-                            binding.progressBar.visibility = View.GONE
-                            Toast.makeText(context, "Terjadi kesalahan", Toast.LENGTH_SHORT).show()
-                        }
-                    }
-                }
+            val tvAdapter = TvFavAdapter(this)
+            binding.progressBar.visibility = View.VISIBLE
+            viewModel.getListTv().observe(viewLifecycleOwner, { listTv ->
+                binding.progressBar.visibility = View.GONE
+                tvAdapter.submitList(listTv)
             })
 
             with(binding.moviesRv) {
                 layoutManager = LinearLayoutManager(context)
                 setHasFixedSize(true)
-                adapter = movieAdapter
+                adapter = tvAdapter
             }
         }
     }
 
-    override fun tvFavoriteClick(tv: TvDetailEntity) {
+    override fun tvDeleteClick(tv: TvDetailEntity) {
         viewModel.setFavoriteTv(tv)
+        val snackbar = Snackbar.make(view as View, R.string.message_undo, Snackbar.LENGTH_LONG)
+        snackbar.setAction(R.string.message_ok) { v ->
+            viewModel.setFavoriteTv(tv)
+        }
+        snackbar.show()
     }
 
     override fun tvDetail(id: Int) {

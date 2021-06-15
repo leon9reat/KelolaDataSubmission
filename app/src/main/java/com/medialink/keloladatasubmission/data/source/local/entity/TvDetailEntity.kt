@@ -1,10 +1,13 @@
 package com.medialink.keloladatasubmission.data.source.local.entity
 
+import android.os.Parcelable
 import androidx.annotation.NonNull
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import kotlinx.parcelize.Parcelize
 
+@Parcelize
 @Entity(tableName = "tv_detail")
 class TvDetailEntity(
     @PrimaryKey
@@ -29,9 +32,6 @@ class TvDetailEntity(
 
     @ColumnInfo(name = "name")
     var name: String?,
-
-    @ColumnInfo(name = "next_episode_to_air")
-    var nextEpisodeToAir: String? = null,
 
     @ColumnInfo(name = "number_of_episodes")
     var numberOfEpisodes: Int? = 0,
@@ -74,4 +74,4 @@ class TvDetailEntity(
 
     @ColumnInfo(name = "is_detail")
     var isDetail: Boolean = false
-)
+) : Parcelable

@@ -1,40 +1,46 @@
 package com.medialink.keloladatasubmission.data.source.local.entity
 
-import android.os.Parcelable
 import androidx.annotation.NonNull
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import kotlinx.parcelize.Parcelize
 
-@Parcelize
-@Entity(tableName = "movie_detail")
-data class MovieDetailEntity(
+@Entity
+data class TvUpdate(
     @PrimaryKey
     @NonNull
     @ColumnInfo(name = "id")
     var id: Int = 0,
 
-    @ColumnInfo(name = "adult")
-    var adult: Boolean?,
-
     @ColumnInfo(name = "backdrop_path")
     var backdropPath: String?,
 
-    @ColumnInfo(name = "budget")
-    var budget: Int? = 0,
+    @ColumnInfo(name = "first_air_date")
+    var firstAirDate: String?,
 
     @ColumnInfo(name = "homepage")
     var homepage: String? = null,
 
-    @ColumnInfo(name = "imdb_id")
-    var imdbId: String? = null,
+    @ColumnInfo(name = "in_production")
+    var inProduction: Boolean? = false,
+
+    @ColumnInfo(name = "last_air_date")
+    var lastAirDate: String? = null,
+
+    @ColumnInfo(name = "name")
+    var name: String?,
+
+    @ColumnInfo(name = "number_of_episodes")
+    var numberOfEpisodes: Int? = 0,
+
+    @ColumnInfo(name = "number_of_seasons")
+    var numberOfSeasons: Int? = 0,
 
     @ColumnInfo(name = "original_language")
     var originalLanguage: String? = null,
 
-    @ColumnInfo(name = "original_title")
-    var originalTitle: String?,
+    @ColumnInfo(name = "original_name")
+    var originalName: String? = null,
 
     @ColumnInfo(name = "overview")
     var overview: String?,
@@ -45,26 +51,14 @@ data class MovieDetailEntity(
     @ColumnInfo(name = "poster_path")
     var posterPath: String?,
 
-    @ColumnInfo(name = "release_date")
-    var releaseDate: String?,
-
-    @ColumnInfo(name = "revenue")
-    var revenue: Int? = 0,
-
-    @ColumnInfo(name = "runtime")
-    var runtime: Int? = 0,
-
     @ColumnInfo(name = "status")
     var status: String? = null,
 
     @ColumnInfo(name = "tagline")
     var tagline: String? = null,
 
-    @ColumnInfo(name = "title")
-    var title: String? = null,
-
-    @ColumnInfo(name = "video")
-    var video: Boolean? = false,
+    @ColumnInfo(name = "type")
+    var type: String? = null,
 
     @ColumnInfo(name = "vote_average")
     var voteAverage: Double?,
@@ -72,10 +66,6 @@ data class MovieDetailEntity(
     @ColumnInfo(name = "vote_count")
     var voteCount: Int?,
 
-    @ColumnInfo(name = "is_favorite")
-    var isFavorite: Boolean = false,
-
     @ColumnInfo(name = "is_detail")
     var isDetail: Boolean = false
-): Parcelable
-
+)

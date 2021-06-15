@@ -1,6 +1,5 @@
-package com.medialink.keloladatasubmission.ui.fragment.movie
+package com.medialink.keloladatasubmission.ui.favorite.movie
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.paging.PagedListAdapter
@@ -11,12 +10,12 @@ import com.bumptech.glide.request.RequestOptions
 import com.medialink.keloladatasubmission.R
 import com.medialink.keloladatasubmission.data.source.local.entity.MovieDetailEntity
 import com.medialink.keloladatasubmission.data.source.remote.retrofit.ApiConfig
-import com.medialink.keloladatasubmission.databinding.BaseItemBinding
+import com.medialink.keloladatasubmission.databinding.FavoriteItemBinding
 
-class MovieAdapter(private val mCallback: IMovieFragment) :
-    PagedListAdapter<MovieDetailEntity, MovieAdapter.BaseViewHolder>(DIFF_CALLBACK) {
+class MovieFavAdapter(private val mCallback: IMovieFavFargment) :
+    PagedListAdapter<MovieDetailEntity, MovieFavAdapter.BaseViewHolder>(DIFF_CALLBACK) {
 
-    inner class BaseViewHolder(private val binding: BaseItemBinding) :
+    inner class BaseViewHolder(private val binding: FavoriteItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(data: MovieDetailEntity) {
             with(binding) {
@@ -26,7 +25,11 @@ class MovieAdapter(private val mCallback: IMovieFragment) :
                 tvVoteMovie.text = data.voteAverage.toString()
                 progressVote.progress = data.voteAverage?.times(10)?.toInt() ?: 0
                 tvOverviewMovie.text = data.overview
-
+                /*itemView.setOnClickListener {
+                    val intent = Intent(itemView.context, DetailCourseActivity::class.java)
+                    intent.putExtra(DetailCourseActivity.EXTRA_COURSE, data.courseId)
+                    itemView.context.startActivity(intent)
+                }*/
                 Glide.with(itemView.context)
                     .load(String.format(ApiConfig.POSTER_PATH, data.posterPath))
                     .apply(
@@ -35,20 +38,15 @@ class MovieAdapter(private val mCallback: IMovieFragment) :
                     )
                     .into(imgPoster)
 
-                btnLike.icon = if (data.isFavorite)
-                    itemView.context.getDrawable(R.drawable.ic_baseline_favorite_24) else
-                    itemView.context.getDrawable(R.drawable.ic_baseline_favorite_border_24)
 
+                btnHapus.setOnClickListener {
+                    mCallback.movieDeleteClick(data)
+                }
                 itemView.setOnClickListener {
                     mCallback.movieDetail(data.id)
                 }
-                btnLike.setOnClickListener {
-                    btnLike.icon = if (data.isFavorite)
-                        itemView.context.getDrawable(R.drawable.ic_baseline_favorite_border_24) else
-                        itemView.context.getDrawable(R.drawable.ic_baseline_favorite_24)
-                    mCallback.movieFavoriteClick(data)
-                }
             }
+
         }
     }
 
@@ -60,12 +58,11 @@ class MovieAdapter(private val mCallback: IMovieFragment) :
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder {
-        val binding = BaseItemBinding.inflate(
+        val binding = FavoriteItemBinding.inflate(
             LayoutInflater.from(parent.context), parent, false
         )
         return BaseViewHolder(binding)
     }
-
 
     companion object {
         private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<MovieDetailEntity>() {
@@ -73,10 +70,9 @@ class MovieAdapter(private val mCallback: IMovieFragment) :
                 oldItem: MovieDetailEntity,
                 newItem: MovieDetailEntity
             ): Boolean {
-                val itemSame = oldItem.id == newItem.id ||
+                return oldItem.id == newItem.id ||
                         oldItem.isFavorite == newItem.isFavorite ||
                         oldItem.isDetail == newItem.isDetail
-                return itemSame
             }
 
             override fun areContentsTheSame(

@@ -1,15 +1,12 @@
 package com.medialink.keloladatasubmission.data.source.local.entity
 
-import android.os.Parcelable
 import androidx.annotation.NonNull
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import kotlinx.parcelize.Parcelize
 
-@Parcelize
-@Entity(tableName = "movie_detail")
-data class MovieDetailEntity(
+@Entity
+data class MovieUpdate(
     @PrimaryKey
     @NonNull
     @ColumnInfo(name = "id")
@@ -72,10 +69,7 @@ data class MovieDetailEntity(
     @ColumnInfo(name = "vote_count")
     var voteCount: Int?,
 
-    @ColumnInfo(name = "is_favorite")
-    var isFavorite: Boolean = false,
-
     @ColumnInfo(name = "is_detail")
     var isDetail: Boolean = false
-): Parcelable
-
+) {
+}

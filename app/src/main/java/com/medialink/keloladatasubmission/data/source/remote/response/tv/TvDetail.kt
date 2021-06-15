@@ -29,8 +29,6 @@ data class TvDetail(
     val lastEpisodeToAir: LastEpisodeToAir?,
     @SerializedName("name")
     val name: String?,
-    @SerializedName("next_episode_to_air")
-    val nextEpisodeToAir: String?,
     @SerializedName("networks")
     val networks: List<Network>?,
     @SerializedName("number_of_episodes")

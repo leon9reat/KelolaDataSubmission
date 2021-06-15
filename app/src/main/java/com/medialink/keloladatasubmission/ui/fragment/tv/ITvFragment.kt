@@ -5,4 +5,6 @@ import com.medialink.keloladatasubmission.data.source.local.entity.TvDetailEntit
 interface ITvFragment {
 
     fun tvFavoriteClick(tv: TvDetailEntity)
+
+    fun tvDetail(id: Int)
 }
