@@ -89,7 +89,7 @@ class TvDetFragment : Fragment() {
 
             tvReleaseDate.text = tv.firstAirDate
             labelReleaseDate.text = getString(R.string.label_airing)
-            tvVote.text = tv.voteAverage.toString() + "/ 10"
+            tvVote.text = tv.voteAverage.toString() + " / 10"
             labelVote.text = tv.voteCount.toString() + " votes"
             tvLanguage.text = tv.originalLanguage
 
